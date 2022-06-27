@@ -1,0 +1,176 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { axiosGet } from '../../utils/request';
+import { AiOutlineStar } from 'react-icons/ai';
+import { IoPersonOutline } from 'react-icons/io5';
+import { MdSignalWifiStatusbarNull } from 'react-icons/md';
+import { FaListUl, FaSort } from 'react-icons/fa';
+import SkeletonLoading from '../SkeletonLoading';
+import setTitlePage from '../functions/setTitlePage';
+
+function MangaDetails({ id }) {
+    const [isLoading, setIsLoading] = useState(true);
+    const [data, setData] = useState({});
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+        });
+        setIsLoading(true);
+        axiosGet(`/details/${id}`).then((data) => {
+            setTitlePage(data.mangaName);
+            setData(data);
+            setIsLoading(false);
+        });
+    }, [id]);
+
+    const handleSortChapters = () => {
+        const newData = { ...data };
+        newData.chapters = newData.chapters.reverse();
+        setData(newData);
+    };
+
+    const renderDetails = () => {
+        return (
+            <div className="w-full flex md:flex-col md:items-center">
+                <div className="w-3/12 lg:w-4/12 md:w-9/12 md:mb-4 mr-12 md:mr-0 aspect-[10/16]  rounded-2xl overflow-hidden">
+                    <img className="h-full object-cover" src={data.posterUrl} alt={data.mangaName} />
+                </div>
+                <div className="flex-1 flex flex-col justify-center text-text-0">
+                    <h2 className="mb-6 text-2xl font-bold line-clamp-2">{data.mangaName}</h2>
+                    <p className="mb-4 line-clamp-5 md:line-clamp-6">{data.description}</p>
+                    <h3 className="flex items-center">
+                        <IoPersonOutline className="font-bold text-lg mr-2" />
+                        {`Tên tác giả: ${data.otherDetails.authorName}`}
+                    </h3>
+                    <h3 className="flex items-center">
+                        <MdSignalWifiStatusbarNull className="font-bold text-lg mr-2" />
+                        {`Trạng thái: ${data.otherDetails.status}`}
+                    </h3>
+                    <h3 className="flex items-center mb-4">
+                        <AiOutlineStar className="font-bold text-lg mr-2" />
+                        {`Xếp hạng: ${data.otherDetails.ratingValue} (${data.otherDetails.ratingCount} bình chọn)`}
+                    </h3>
+                    <div className="flex flex-wrap mb-4">
+                        {data.categories.map((category, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    className="p-2 mr-2 mb-2 border-2 border-solid border-primary rounded-lg"
+                                >
+                                    {category.categoryName}
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div className="flex flex-wrap">
+                        <Link
+                            to={`/reading/${data.chapters[data.chapters.length - 1].chapterId}`}
+                            className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
+                        >
+                            Đọc từ đầu
+                        </Link>
+                        <Link
+                            to={`/reading/${data.chapters[0].chapterId}`}
+                            className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
+                        >
+                            Đọc mới nhất
+                        </Link>
+                        <button className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all">
+                            Thêm vào thư viện
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderSkeletonLoading = () => {
+        return (
+            <div className="w-full flex md:flex-col md:items-center">
+                <div className="w-3/12 lg:w-4/12 md:w-9/12 md:mb-4 mr-12 md:mr-0 rounded-xl aspect-[10/16] overflow-hidden">
+                    <SkeletonLoading count={1} height="100%" />
+                </div>
+                <div className="flex-1 flex flex-col justify-center">
+                    <div className="mb-6">
+                        <SkeletonLoading count={1} height="1.5rem" width="60%" />
+                    </div>
+                    <div className="mb-4 line-clamp-5">
+                        <SkeletonLoading count={4} />
+                    </div>
+                    <div className="flex items-center">
+                        <SkeletonLoading count={1} width="15rem" />
+                    </div>
+                    <div className="flex items-center">
+                        <SkeletonLoading count={1} width="15rem" />
+                    </div>
+                    <div className="flex items-center mb-4">
+                        <SkeletonLoading count={1} width="15rem" />
+                    </div>
+                    <div className="flex flex-wrap items-center mb-4">
+                        <SkeletonLoading className="mr-2 mb-2" count={1} height="1.8rem" width="8rem" />
+                        <SkeletonLoading className="mr-2 mb-2" count={1} height="1.8rem" width="8rem" />
+                        <SkeletonLoading className="mr-2 mb-2" count={1} height="1.8rem" width="8rem" />
+                    </div>
+                    <div className="flex flex-wrap">
+                        <SkeletonLoading className="mr-2 mb-2" count={1} height="2rem" width="10rem" />
+                        <SkeletonLoading className="mr-2 mb-2" count={1} height="2rem" width="10rem" />
+                        <SkeletonLoading className="mr-2 mb-2" count={1} height="2rem" width="10rem" />
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div className="w-full p-12 md:px-2 md:py-8 rounded-xl bg-background-2">
+            {isLoading ? renderSkeletonLoading() : renderDetails()}
+
+            <h2 className="flex items-center mt-16 mb-4 text-xl text-primary">
+                <FaListUl className="mr-2" />
+                Danh sách Chapter:
+            </h2>
+            <div className="max-h-[70vh] w-full p-4 md:p-2 rounded-lg bg-background-3 scrollbar">
+                <table className="table-auto w-full text-white">
+                    <thead>
+                        <tr>
+                            <td className="font-bold p-2 w-5/12 sm:w-7/12">
+                                <button
+                                    onClick={handleSortChapters}
+                                    className="flex items-center hover:text-primary transition"
+                                >
+                                    Chapter
+                                    <FaSort className="ml-[0.25rem]" />
+                                </button>
+                            </td>
+                            <td className="font-bold p-2 w-4/12 text-center sm:w-5/12">Cập nhật</td>
+                            <td className="font-bold p-2 w-3/12 text-center sm:hidden">Xem</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data?.chapters?.map((chapter, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td className="flex p-2">
+                                        <Link
+                                            className="line-clamp-2 hover:text-primary"
+                                            to={`/reading/${chapter.chapterId}`}
+                                        >
+                                            {chapter.chapterName}
+                                        </Link>
+                                    </td>
+                                    <td className="text-center text-text-1 italic p-2">{chapter.updatedAt}</td>
+                                    <td className="text-center text-text-1 italic p-2 sm:hidden">
+                                        {chapter.viewCount}
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
+export default MangaDetails;
