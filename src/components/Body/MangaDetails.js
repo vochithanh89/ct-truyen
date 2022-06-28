@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosGet } from '../../utils/request';
 import { AiOutlineStar } from 'react-icons/ai';
@@ -7,10 +7,13 @@ import { MdSignalWifiStatusbarNull } from 'react-icons/md';
 import { FaListUl, FaSort } from 'react-icons/fa';
 import SkeletonLoading from '../SkeletonLoading';
 import setTitlePage from '../functions/setTitlePage';
+import { getChapterPrev } from '../functions/handleHistory';
+import { addMangaToLibrary, getLibrary, removeMangaToLibrary } from '../functions/handleLibrary';
 
 function MangaDetails({ id }) {
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState({});
+    const [isInLibrary, setIsInLibrary] = useState(false);
 
     useEffect(() => {
         window.scrollTo({
@@ -24,17 +27,61 @@ function MangaDetails({ id }) {
         });
     }, [id]);
 
+    useEffect(() => {
+        const library = getLibrary();
+        const isInLibrary = !!library.find((item) => item.id === data.id);
+        setIsInLibrary(isInLibrary);
+    }, [data]);
+
+    const prevChapter = useMemo(() => getChapterPrev(id), [id]);
+
+    const chapterStart = useMemo(
+        () => {
+            if (Object.entries(data).length !== 0) {
+                return data.chapters[data.chapters.length - 1];
+            }
+        },
+        // eslint-disable-next-line
+        [data],
+    );
+
+    const chapterEnd = useMemo(
+        () => {
+            if (Object.entries(data).length !== 0) {
+                return data.chapters[0];
+            }
+        },
+        // eslint-disable-next-line
+        [data],
+    );
+
     const handleSortChapters = () => {
         const newData = { ...data };
         newData.chapters = newData.chapters.reverse();
         setData(newData);
     };
 
+    const handleAddMangaToLibrary = (data) => {
+        addMangaToLibrary(data);
+        setIsInLibrary(true);
+    };
+
+    const handleRemoveMangaToLibrary = (id) => {
+        removeMangaToLibrary(id);
+        setIsInLibrary(false);
+    };
+
     const renderDetails = () => {
         return (
-            <div className="w-full flex md:flex-col md:items-center">
-                <div className="w-3/12 lg:w-4/12 md:w-9/12 md:mb-4 mr-12 md:mr-0 aspect-[10/16]  rounded-2xl overflow-hidden">
-                    <img className="h-full object-cover" src={data.posterUrl} alt={data.mangaName} />
+            <div className="w-full flex items-center md:flex-col">
+                <div className="w-3/12 lg:w-4/12 md:w-9/12 md:mb-4 mr-12 md:mr-0 rounded-2xl overflow-hidden">
+                    <div className="relative pt-[160%]">
+                        <img
+                            className="absolute top-0 left-0 w-full h-full object-cover"
+                            src={data.posterUrl}
+                            alt={data.mangaName}
+                        />
+                    </div>
                 </div>
                 <div className="flex-1 flex flex-col justify-center text-text-0">
                     <h2 className="mb-6 text-2xl font-bold line-clamp-2">{data.mangaName}</h2>
@@ -56,7 +103,7 @@ function MangaDetails({ id }) {
                             return (
                                 <div
                                     key={index}
-                                    className="p-2 mr-2 mb-2 border-2 border-solid border-primary rounded-lg"
+                                    className="px-[0.5rem] py-[0.25rem] mr-2 mb-2 border-2 border-solid border-primary rounded-lg"
                                 >
                                     {category.categoryName}
                                 </div>
@@ -64,21 +111,45 @@ function MangaDetails({ id }) {
                         })}
                     </div>
                     <div className="flex flex-wrap">
+                        {prevChapter && (
+                            <Link
+                                to={`/reading/${prevChapter.chapterId}`}
+                                className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
+                                title={`Đọc tiếp ${prevChapter.chapterName}`}
+                            >
+                                Đọc tiếp
+                            </Link>
+                        )}
                         <Link
-                            to={`/reading/${data.chapters[data.chapters.length - 1].chapterId}`}
+                            to={`/reading/${chapterStart.chapterId}`}
                             className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
+                            title={chapterStart.chapterName}
                         >
                             Đọc từ đầu
                         </Link>
                         <Link
-                            to={`/reading/${data.chapters[0].chapterId}`}
+                            to={`/reading/${chapterEnd.chapterId}`}
                             className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
+                            title={chapterEnd.chapterName}
                         >
                             Đọc mới nhất
                         </Link>
-                        <button className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all">
-                            Thêm vào thư viện
-                        </button>
+
+                        {isInLibrary ? (
+                            <button
+                                onClick={() => handleRemoveMangaToLibrary(data.id)}
+                                className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
+                            >
+                                Xoá khỏi thư viện
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => handleAddMangaToLibrary(data)}
+                                className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
+                            >
+                                Thêm vào thư viện
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -88,8 +159,10 @@ function MangaDetails({ id }) {
     const renderSkeletonLoading = () => {
         return (
             <div className="w-full flex md:flex-col md:items-center">
-                <div className="w-3/12 lg:w-4/12 md:w-9/12 md:mb-4 mr-12 md:mr-0 rounded-xl aspect-[10/16] overflow-hidden">
-                    <SkeletonLoading count={1} height="100%" />
+                <div className="w-3/12 lg:w-4/12 md:w-9/12 md:mb-4 mr-12 md:mr-0 rounded-xl overflow-hidden">
+                    <div className="relative pt-[160%]">
+                        <SkeletonLoading className="absolute top-0 left-0" count={1} height="100%" />
+                    </div>
                 </div>
                 <div className="flex-1 flex flex-col justify-center">
                     <div className="mb-6">

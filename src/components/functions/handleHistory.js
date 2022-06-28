@@ -4,20 +4,27 @@ export const getHistory = () => {
 };
 
 export const addMangaToHistory = (data) => {
-    const history = JSON.parse(localStorage.getItem('history'));
-    if (history) {
-        const myData = history.filter((item) => {
-            return item.id !== data.id;
-        });
-        myData.unshift(data);
-        localStorage.setItem('history', JSON.stringify(myData));
-    } else {
-        localStorage.setItem('history', JSON.stringify([data]));
-    }
+    const history = getHistory();
+
+    const myData = history.filter((item) => {
+        return item.id !== data.id;
+    });
+    myData.unshift(data);
+    localStorage.setItem('history', JSON.stringify(myData));
+};
+
+export const getChapterPrev = (id) => {
+    const history = getHistory();
+
+    const myData = history.find((item) => {
+        //nettruyen-api home manga id === reading mangaid + 0 (sometime)
+        return item.id === id || item.id === id + '0';
+    });
+    return myData?.chapterSeen;
 };
 
 export const removeMangaHistory = (id) => {
-    const history = JSON.parse(localStorage.getItem('history'));
+    const history = getHistory();
     const myData = history.filter((item) => {
         return item.id !== id;
     });
@@ -25,5 +32,5 @@ export const removeMangaHistory = (id) => {
 };
 
 export const removeAllHistory = () => {
-    localStorage.removeItem('history');
+    localStorage.setItem('history', JSON.stringify([]));
 };

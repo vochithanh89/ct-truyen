@@ -76,6 +76,7 @@ function ReadingNav({ data, chapterIndex, mangaId, setSelectedChapterId }) {
                             styles={customStylesReactSelect}
                             value={options[chapterIndex]}
                             options={options}
+                            isSearchable={false}
                             className="text-sm"
                             onChange={handleChange}
                             filterOption={createFilter({ ignoreAccents: false })} //fix lag

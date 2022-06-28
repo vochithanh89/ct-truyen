@@ -6,6 +6,7 @@ import ReadingNav from './ReadingNav';
 import { useNavigate } from 'react-router-dom';
 import setTitlePage from '../functions/setTitlePage';
 import { addMangaToHistory } from '../functions/handleHistory';
+import { updateChapterSeenLibrary } from '../functions/handleLibrary';
 
 function ReadingPlace({ id }) {
     const navigate = useNavigate();
@@ -54,6 +55,7 @@ function ReadingPlace({ id }) {
                 chapterSeen,
             };
             addMangaToHistory(historyData);
+            updateChapterSeenLibrary(id, chapterSeen);
         }
         // eslint-disable-next-line
     }, [chapters, currentChapterIndex]);
@@ -109,14 +111,14 @@ function ReadingPlace({ id }) {
     };
 
     const renderEndMessage = () => {
-        return <h2 className="py-4 bg-primary text-center text-text-0 text-xl">Chưa có Chapter mới</h2>;
+        return <h2 className="py-[0.75rem] bg-primary text-center text-text-0">Chưa có Chapter mới</h2>;
     };
 
     const renderChapterImages = () => {
         return data.map((chapter, index) => {
             return (
                 <div key={index}>
-                    <h2 className="py-4 bg-primary text-center text-text-0 text-xl">{chapter.chapterName}</h2>
+                    <h2 className="py-[0.75rem] bg-primary text-center text-text-0">{chapter.chapterName}</h2>
                     <ul>
                         {chapter.chapterImages.map((chapterImage, index) => {
                             return (
