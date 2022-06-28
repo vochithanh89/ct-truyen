@@ -2,9 +2,9 @@ import Container from '../Container';
 
 function Body({ children }) {
     return (
-        <div className="bg-background-1">
+        <div className="flex-1 bg-background-1">
             <Container>
-                <div style={{ minHeight: 'calc(100vh - 72px)' }} className="flex flex-warp">
+                <div style={{ minHeight: 'calc(100vh - 80px)' }} className="flex flex-warp">
                     {children}
                 </div>
             </Container>

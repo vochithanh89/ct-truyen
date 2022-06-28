@@ -11,12 +11,14 @@ function App() {
             <Router store={store}>
                 <GlobalStyles>
                     <div className="App">
-                        <Routes>
-                            {publicRoutes.map((route, index) => {
-                                const Page = route.page;
-                                return <Route key={index} path={route.path} element={<Page />} />;
-                            })}
-                        </Routes>
+                        <div className="flex flex-col min-h-screen">
+                            <Routes>
+                                {publicRoutes.map((route, index) => {
+                                    const Page = route.page;
+                                    return <Route key={index} path={route.path} element={<Page />} />;
+                                })}
+                            </Routes>
+                        </div>
                     </div>
                 </GlobalStyles>
             </Router>
