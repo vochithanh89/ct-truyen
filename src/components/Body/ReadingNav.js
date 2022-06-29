@@ -7,18 +7,23 @@ import Select, { createFilter } from 'react-select';
 import { customStylesReactSelect } from '../constants/customStylesReactSelect';
 import clsx from 'clsx';
 
-function ReadingNav({ data, chapterIndex, mangaId, setSelectedChapterId }) {
+function ReadingNav({ chapters, mangaId, currentChapter, prevChapterId, nextChapterId, setSelectedChapterId }) {
     const readingNavRef = useRef();
     const containerRef = useRef();
 
     const navigate = useNavigate();
 
-    const options = data.map((chapter) => {
+    const options = chapters.map((chapter) => {
         return {
             value: chapter.chapterId,
             label: chapter.chapterName,
         };
     });
+
+    const currentOption = {
+        value: currentChapter.chapterId,
+        label: currentChapter.chapterName,
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -43,14 +48,14 @@ function ReadingNav({ data, chapterIndex, mangaId, setSelectedChapterId }) {
         navigate(`/reading/${options.value}`);
     };
 
-    const handleNextChapter = (options, chapterIndex) => {
-        setSelectedChapterId(options[chapterIndex + 1]);
-        navigate(`/reading/${options[chapterIndex + 1].value}`);
+    const handleNextChapter = () => {
+        setSelectedChapterId(nextChapterId);
+        navigate(`/reading/${nextChapterId}`);
     };
 
-    const handlePreviousChapter = (options, chapterIndex) => {
-        setSelectedChapterId(options[chapterIndex - 1]);
-        navigate(`/reading/${options[chapterIndex - 1].value}`);
+    const handlePreviousChapter = () => {
+        setSelectedChapterId(prevChapterId);
+        navigate(`/reading/${prevChapterId}`);
     };
 
     return (
@@ -58,23 +63,29 @@ function ReadingNav({ data, chapterIndex, mangaId, setSelectedChapterId }) {
             <div ref={readingNavRef} className=" top-0 left-0 right-0 mb-2 bg-transparent">
                 <Container>
                     <div className="flex p-[0.25rem] items-center justify-center text-text-0">
-                        <Link to="/" className="p-3 md:p-2 mx-2 xs:mx-[0.125rem] rounded-lg bg-background-3 text-xl">
+                        <Link
+                            to="/"
+                            className="p-3 md:p-2 mx-2 xs:mx-[0.125rem] rounded-lg bg-background-3 text-xl lg:text-2xl"
+                        >
                             <FaHome />
                         </Link>
                         <button
-                            onClick={() => handlePreviousChapter(options, chapterIndex)}
+                            onClick={handlePreviousChapter}
                             to={`/details/${mangaId}`}
-                            className={clsx('p-3 md:p-2 mx-2 xs:mx-[0.125rem] rounded-lg bg-background-3 text-xl', {
-                                '!text-text-1': chapterIndex === 0,
-                            })}
-                            disabled={chapterIndex === 0}
+                            className={clsx(
+                                'p-3 md:p-2 mx-2 xs:mx-[0.125rem] rounded-lg text-text-1 bg-background-3 text-xl lg:text-2xl',
+                                {
+                                    '!text-text-0': prevChapterId,
+                                },
+                            )}
+                            disabled={!prevChapterId}
                         >
                             <IoIosArrowBack />
                         </button>
 
                         <Select
                             styles={customStylesReactSelect}
-                            value={options[chapterIndex]}
+                            value={currentOption}
                             options={options}
                             isSearchable={false}
                             className="text-sm"
@@ -83,18 +94,21 @@ function ReadingNav({ data, chapterIndex, mangaId, setSelectedChapterId }) {
                         />
 
                         <button
-                            onClick={() => handleNextChapter(options, chapterIndex)}
+                            onClick={handleNextChapter}
                             to={`/details/${mangaId}`}
-                            className={clsx('p-3 md:p-2 mx-2 xs:mx-[0.125rem] rounded-lg bg-background-3 text-xl', {
-                                '!text-text-1': chapterIndex === data.length - 1,
-                            })}
-                            disabled={chapterIndex === data.length - 1}
+                            className={clsx(
+                                'p-3 md:p-2 mx-2 xs:mx-[0.125rem] rounded-lg text-text-1 bg-background-3 text-xl lg:text-2xl',
+                                {
+                                    '!text-text-0': nextChapterId,
+                                },
+                            )}
+                            disabled={!nextChapterId}
                         >
                             <IoIosArrowForward />
                         </button>
                         <Link
                             to={`/details/${mangaId}`}
-                            className="p-3 md:p-2 mx-2 xs:mx-[0.125rem] rounded-lg bg-background-3 text-xl"
+                            className="p-3 md:p-2 mx-2 xs:mx-[0.125rem] rounded-lg bg-background-3 text-xl lg:text-2xl"
                         >
                             <FaListUl />
                         </Link>

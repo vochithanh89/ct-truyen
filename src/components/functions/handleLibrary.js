@@ -8,21 +8,21 @@ export const getLibrary = () => {
 export const addMangaToLibrary = (data) => {
     const library = getLibrary();
     const history = getHistory();
-    const chapterSeen =
-        history.find((item) => item.id === data.id)?.chapterSeen || data.chapters[data.chapters.length - 1];
+    const currentChapter =
+        history.find((item) => item.id === data.id)?.currentChapter || data.chapters[data.chapters.length - 1];
 
     const myData = library.filter((item) => {
         return item.id !== data.id;
     });
-    myData.unshift({ ...data, chapterSeen });
+    myData.unshift({ ...data, currentChapter });
     localStorage.setItem('library', JSON.stringify(myData));
 };
 
-export const updateChapterSeenLibrary = (id, chapterSeen) => {
+export const updateCurrentChapterLibrary = (id, currentChapter) => {
     const library = getLibrary();
     const manga = library.find((item) => item.id === id || item.id + '0' === id);
     if (manga) {
-        manga.chapterSeen = chapterSeen;
+        manga.currentChapter = currentChapter;
         const myData = library.filter((item) => item.id !== id && item.id + '0' !== id);
         myData.unshift(manga);
         localStorage.setItem('library', JSON.stringify(myData));

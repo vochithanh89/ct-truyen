@@ -1,65 +1,51 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { axiosGet } from '../../utils/request';
 import { mangaFiltersSelector } from '../redux/selectors';
 import MangaCard from './MangaCard';
 import LoadingIcon from '../LoadingIcon/LoadingIcon';
 import setTitlePage from '../functions/setTitlePage';
 
 import SkeletonLoading from '../SkeletonLoading';
+import { getMangaList } from '../../utils/api';
 
 function MangaList() {
     const { filters } = useSelector(mangaFiltersSelector);
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const [result, setResult] = useState(null);
     const [data, setData] = useState([]);
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPage, setTotalPage] = useState(1);
-
-    const [title, setTitle] = useState('');
 
     useEffect(() => {
         window.scrollTo({
             top: 0,
         });
         setIsLoading(true);
-        axiosGet('/list?', {
-            params: {
-                ...filters,
-            },
-        }).then((data) => {
-            setData(data.data);
+        getMangaList(1, filters).then((res) => {
+            const { title, pagination, data } = res;
+            setResult({ title, pagination });
+            setData(data);
+            setTitlePage(title);
             setIsLoading(false);
-            setCurrentPage(data.pagination.currentPage);
-            setTotalPage(data.pagination.totalPage);
-        });
-
-        axiosGet('/filter').then((data) => {
-            const category = data.find((item) => {
-                return item.id === 'category';
-            });
-            const { name } = category.filtersValue.find((item) => {
-                return item.id === filters.category;
-            });
-            setTitle(name);
-            setTitlePage(name);
         });
         // eslint-disable-next-line
     }, [filters]);
 
+    const currentPage = useMemo(() => {
+        return result ? result.pagination.currentPage : -1;
+    }, [result]);
+
+    const totalPage = useMemo(() => {
+        return result ? result.pagination.totalPage : 0;
+    }, [result]);
+
     const loadMoreData = () => {
-        axiosGet('/list?', {
-            params: {
-                ...filters,
-                page: currentPage + 1,
-            },
-        }).then((data) => {
-            setData((pre) => [...pre, ...data.data]);
-            setCurrentPage(data.pagination.currentPage);
+        getMangaList(currentPage + 1, filters).then((res) => {
+            const { title, pagination, data } = res;
+            setData((pre) => [...pre, ...data]);
+            setResult({ title, pagination });
         });
     };
 
@@ -80,17 +66,13 @@ function MangaList() {
     };
 
     const renderLoading = () => {
-        return (
-            <div className="text-center">
-                <LoadingIcon />
-            </div>
-        );
+        return <LoadingIcon />;
     };
 
     return (
         <div className="w-10/12 lg:w-full md:w-full p-6 md:p-2 bg-background-2 rounded-xl">
             <h1 className="my-4 px-2 text-primary text-2xl md:text-xl font-bold">
-                {title || <SkeletonLoading width="12rem" height="2rem" />}
+                {result?.title || <SkeletonLoading width="12rem" height="2rem" />}
             </h1>
 
             {isLoading ? (

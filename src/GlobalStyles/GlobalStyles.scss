@@ -20,6 +20,10 @@ body {
     }
 }
 
+button:active {
+    outline: none;
+}
+
 .scrollbar {
     overflow: auto;
 
@@ -50,5 +54,8 @@ body {
     * {
         user-select: none !important;
         cursor: default !important;
+    }
+    html {
+        font-size: 75%;
     }
 }

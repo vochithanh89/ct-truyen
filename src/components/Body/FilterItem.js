@@ -13,7 +13,7 @@ function FilterItem({ data }) {
     const [isShowMenu, setIsShowMenu] = useState(true);
 
     const handleShowMenu = () => {
-        setIsShowMenu((pre) => !pre);
+        data.filtersValue.length > 8 && setIsShowMenu((pre) => !pre);
     };
 
     const handleFilter = (type, value) => {
@@ -22,10 +22,10 @@ function FilterItem({ data }) {
     };
 
     return (
-        <div className="select-none">
+        <div className="lg:text-lg">
             <button onClick={handleShowMenu} className="w-full flex items-center justify-start text-primary">
                 <h2 className="font-bold">{data.title}</h2>
-                <MdKeyboardArrowDown />
+                {data.filtersValue.length > 8 && <MdKeyboardArrowDown />}
             </button>
             <ul
                 className={clsx('hidden scrollbar transition-all', {

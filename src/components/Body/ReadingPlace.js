@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { axiosGet } from '../../utils/request';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import LoadingIcon from '../LoadingIcon/LoadingIcon';
 import ReadingNav from './ReadingNav';
 import { useNavigate } from 'react-router-dom';
 import setTitlePage from '../functions/setTitlePage';
 import { addMangaToHistory } from '../functions/handleHistory';
-import { updateChapterSeenLibrary } from '../functions/handleLibrary';
+import { updateCurrentChapterLibrary } from '../functions/handleLibrary';
+import { getChapter } from '../../utils/api';
 
 function ReadingPlace({ id }) {
     const navigate = useNavigate();
@@ -17,97 +17,67 @@ function ReadingPlace({ id }) {
 
     const [data, setData] = useState([]);
 
-    const [mangaId, setMangaId] = useState('');
-
-    const [chapters, setChapters] = useState([]);
-    const [mangaDetails, setMangaDetails] = useState({});
-
-    const currentChapterId = useMemo(() => {
-        return data[data.length - 1]?.chapterId;
-        // eslint-disable-next-line
-    }, [data]);
-
-    const totalChapterNumber = useMemo(() => {
-        return chapters ? chapters.length : 0;
-        // eslint-disable-next-line
-    }, [chapters]);
-
-    const currentChapterIndex = useMemo(() => {
-        let chapterIndex;
-        chapters?.forEach((chapter, index) => {
-            if (chapter.chapterId === currentChapterId) {
-                chapterIndex = index;
-            }
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
         });
-        return Number.isInteger(chapterIndex) ? chapterIndex : -1;
-        // eslint-disable-next-line
-    }, [chapters, currentChapterId]);
-
-    //handle history
-    useEffect(() => {
-        if (chapters.length > 0 && currentChapterIndex >= 0) {
-            const { mangaName, id, posterUrl } = mangaDetails;
-            const chapterSeen = chapters[currentChapterIndex];
-            const historyData = {
-                mangaName,
-                id,
-                posterUrl,
-                chapterSeen,
-            };
-            addMangaToHistory(historyData);
-            updateChapterSeenLibrary(id, chapterSeen);
-        }
-        // eslint-disable-next-line
-    }, [chapters, currentChapterIndex]);
-
-    useEffect(() => {
-        if (selectedChapterId) {
-            window.scrollTo({
-                top: 0,
-            });
-            setIsLoading(true);
-            axiosGet(`/chapter/${id}`).then((data) => {
-                setMangaId(data.id);
-                setData([data]);
-                setIsLoading(false);
-            });
-        }
+        setIsLoading(true);
+        getChapter(selectedChapterId).then((data) => {
+            setIsLoading(false);
+            setTitlePage(data.title);
+            setData([data]);
+        });
         // eslint-disable-next-line
     }, [selectedChapterId]);
 
+    const currentData = useMemo(() => {
+        return data.length > 0 ? data[data.length - 1] : null;
+    }, [data]);
+
+    const chapters = useMemo(() => {
+        return currentData ? currentData.chapters : null;
+    }, [currentData]);
+
+    const currentChapter = useMemo(() => {
+        return currentData ? currentData.currentChapter : null;
+    }, [currentData]);
+
+    const nextChapterId = useMemo(() => {
+        return currentData && currentData.nextChapter ? currentData.nextChapter.chapterId : null;
+    }, [currentData]);
+
+    const prevChapterId = useMemo(() => {
+        return currentData && currentData.prevChapter ? currentData.prevChapter.chapterId : null;
+    }, [currentData]);
+
+    const mangaId = useMemo(() => {
+        return currentData ? currentData.id : null;
+    }, [currentData]);
+    //handle history
     useEffect(() => {
-        if (mangaId) {
-            axiosGet(`/details/${mangaId}`).then((data) => {
-                const chapters = data.chapters.reverse();
-                setChapters(chapters);
-                const mangaDetails = data;
-                mangaDetails.chapters = chapters;
-                setMangaDetails(mangaDetails);
+        if (currentData) {
+            const { mangaName, id, posterUrl, currentChapter } = currentData;
+            addMangaToHistory({
+                mangaName,
+                posterUrl,
+                id,
+                currentChapter,
             });
+            updateCurrentChapterLibrary(id, currentChapter);
         }
-    }, [mangaId]);
+    }, [currentData]);
 
     const loadMoreData = () => {
-        const chapterNext = chapters.find((chapter, index, chapters) => {
-            return chapters[index - 1]?.chapterId === currentChapterId;
+        getChapter(nextChapterId).then((data) => {
+            navigate(`/reading/${nextChapterId}`);
+            setIsLoading(false);
+            setTitlePage(data.title);
+            setData((pre) => [...pre, data]);
         });
-        const chapterIdNext = chapterNext?.chapterId;
-        if (chapterIdNext) {
-            axiosGet(`/chapter/${chapterIdNext}`).then((data) => {
-                navigate(`/reading/${chapterIdNext}`);
-                setData((pre) => [...pre, data]);
-                setTitlePage(`${data.mangaName} ${data.chapterName}`);
-                setSelectedChapterId('');
-            });
-        }
     };
 
     const renderLoading = () => {
-        return (
-            <div className="text-center">
-                <LoadingIcon />
-            </div>
-        );
+        return <LoadingIcon />;
     };
 
     const renderEndMessage = () => {
@@ -118,7 +88,9 @@ function ReadingPlace({ id }) {
         return data.map((chapter, index) => {
             return (
                 <div key={index}>
-                    <h2 className="py-[0.75rem] bg-primary text-center text-text-0">{chapter.chapterName}</h2>
+                    <h2 className="py-[0.75rem] bg-primary text-center text-text-0">
+                        {chapter.currentChapter.chapterName}
+                    </h2>
                     <ul>
                         {chapter.chapterImages.map((chapterImage, index) => {
                             return (
@@ -135,11 +107,13 @@ function ReadingPlace({ id }) {
 
     return (
         <div className="w-full">
-            {chapters.length > 0 && (
+            {data.length > 0 && (
                 <ReadingNav
-                    data={chapters}
-                    chapterIndex={currentChapterIndex}
+                    chapters={chapters}
                     mangaId={mangaId}
+                    currentChapter={currentChapter}
+                    prevChapterId={prevChapterId}
+                    nextChapterId={nextChapterId}
                     setSelectedChapterId={setSelectedChapterId}
                 />
             )}
@@ -151,7 +125,7 @@ function ReadingPlace({ id }) {
                     className="flex flex-col max-w-3xl m-auto"
                     dataLength={data.length}
                     next={loadMoreData}
-                    hasMore={currentChapterIndex < totalChapterNumber - 1}
+                    hasMore={nextChapterId}
                     loader={renderLoading()}
                     endMessage={renderEndMessage()}
                     scrollThreshold={1}

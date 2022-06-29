@@ -1,14 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { axiosGet } from '../../utils/request';
 import { AiOutlineStar } from 'react-icons/ai';
 import { IoPersonOutline } from 'react-icons/io5';
 import { MdSignalWifiStatusbarNull } from 'react-icons/md';
 import { FaListUl, FaSort } from 'react-icons/fa';
 import SkeletonLoading from '../SkeletonLoading';
 import setTitlePage from '../functions/setTitlePage';
-import { getChapterPrev } from '../functions/handleHistory';
-import { addMangaToLibrary, getLibrary, removeMangaToLibrary } from '../functions/handleLibrary';
+import { addMangaToLibrary, removeMangaToLibrary } from '../functions/handleLibrary';
+import { getMangaDetails } from '../../utils/api';
 
 function MangaDetails({ id }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -20,40 +19,13 @@ function MangaDetails({ id }) {
             top: 0,
         });
         setIsLoading(true);
-        axiosGet(`/details/${id}`).then((data) => {
-            setTitlePage(data.mangaName);
-            setData(data);
+        getMangaDetails(id).then((data) => {
             setIsLoading(false);
+            setIsInLibrary(!!data.isInLibrary);
+            setData(data);
+            setTitlePage(data.title);
         });
     }, [id]);
-
-    useEffect(() => {
-        const library = getLibrary();
-        const isInLibrary = !!library.find((item) => item.id === data.id);
-        setIsInLibrary(isInLibrary);
-    }, [data]);
-
-    const prevChapter = useMemo(() => getChapterPrev(id), [id]);
-
-    const chapterStart = useMemo(
-        () => {
-            if (Object.entries(data).length !== 0) {
-                return data.chapters[data.chapters.length - 1];
-            }
-        },
-        // eslint-disable-next-line
-        [data],
-    );
-
-    const chapterEnd = useMemo(
-        () => {
-            if (Object.entries(data).length !== 0) {
-                return data.chapters[0];
-            }
-        },
-        // eslint-disable-next-line
-        [data],
-    );
 
     const handleSortChapters = () => {
         const newData = { ...data };
@@ -62,7 +34,16 @@ function MangaDetails({ id }) {
     };
 
     const handleAddMangaToLibrary = (data) => {
-        addMangaToLibrary(data);
+        const { mangaName, id, posterUrl, chapters, firstChapter, lastChapter, updatedAt } = data;
+        addMangaToLibrary({
+            mangaName,
+            id,
+            posterUrl,
+            chapters,
+            firstChapter,
+            lastChapter,
+            updatedAt,
+        });
         setIsInLibrary(true);
     };
 
@@ -74,7 +55,7 @@ function MangaDetails({ id }) {
     const renderDetails = () => {
         return (
             <div className="w-full flex items-center md:flex-col">
-                <div className="w-3/12 lg:w-4/12 md:w-9/12 md:mb-4 mr-12 md:mr-0 rounded-2xl overflow-hidden">
+                <div className="w-3/12 lg:w-4/12 md:w-8/12 md:mb-4 mr-12 md:mr-0 rounded-2xl overflow-hidden">
                     <div className="relative pt-[160%]">
                         <img
                             className="absolute top-0 left-0 w-full h-full object-cover"
@@ -111,26 +92,26 @@ function MangaDetails({ id }) {
                         })}
                     </div>
                     <div className="flex flex-wrap">
-                        {prevChapter && (
+                        {data.currentChapter && (
                             <Link
-                                to={`/reading/${prevChapter.chapterId}`}
+                                to={`/reading/${data.currentChapter.chapterId}`}
                                 className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
-                                title={`Đọc tiếp ${prevChapter.chapterName}`}
+                                title={`Đọc tiếp ${data.currentChapter.chapterName}`}
                             >
                                 Đọc tiếp
                             </Link>
                         )}
                         <Link
-                            to={`/reading/${chapterStart.chapterId}`}
+                            to={`/reading/${data.firstChapter.chapterId}`}
                             className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
-                            title={chapterStart.chapterName}
+                            title={data.firstChapter.chapterName}
                         >
                             Đọc từ đầu
                         </Link>
                         <Link
-                            to={`/reading/${chapterEnd.chapterId}`}
+                            to={`/reading/${data.lastChapter.chapterId}`}
                             className="px-4 py-2 mr-2 mb-2 rounded-lg bg-primary hover:bg-secondary transition-all"
-                            title={chapterEnd.chapterName}
+                            title={data.lastChapter.chapterName}
                         >
                             Đọc mới nhất
                         </Link>
@@ -159,7 +140,7 @@ function MangaDetails({ id }) {
     const renderSkeletonLoading = () => {
         return (
             <div className="w-full flex md:flex-col md:items-center">
-                <div className="w-3/12 lg:w-4/12 md:w-9/12 md:mb-4 mr-12 md:mr-0 rounded-xl overflow-hidden">
+                <div className="w-3/12 lg:w-4/12 md:w-8/12 md:mb-4 mr-12 md:mr-0 rounded-xl overflow-hidden">
                     <div className="relative pt-[160%]">
                         <SkeletonLoading className="absolute top-0 left-0" count={1} height="100%" />
                     </div>

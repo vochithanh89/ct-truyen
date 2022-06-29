@@ -5,10 +5,10 @@ export const customStylesReactSelect = {
         margin: '8px',
         border: 'none',
         borderRadius: '4px',
-        width: 200,
+        width: '12.5rem',
         '@media screen and (max-width: 767px)': {
             ...provided['@media screen and (max-width: 767px)'],
-            width: 140,
+            width: '12.5rem',
             margin: '2px',
         },
     }),
@@ -44,7 +44,7 @@ export const customStylesReactSelect = {
         ...provided,
         color: state.isDisabled ? '#59565D' : '#fff',
     }),
-    indicatorSeparator: (provided) => ({
+    indicatorSeparator: () => ({
         display: 'none',
     }),
 };

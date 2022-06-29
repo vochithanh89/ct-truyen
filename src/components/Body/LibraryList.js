@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import MangaCard from './MangaCard';
 import { Link } from 'react-router-dom';
 import { getLibrary } from '../functions/handleLibrary';
+import setTitlePage from '../functions/setTitlePage';
 
 function LibraryList() {
     const [library, setLibrary] = useState([]);
 
     useEffect(() => {
         handleGetLibrary();
+        setTitlePage('Thư viện');
     }, []);
 
     const handleGetLibrary = () => {
@@ -36,8 +38,8 @@ function LibraryList() {
                                 mangaName={item.mangaName}
                                 id={item.id}
                                 posterUrl={item.posterUrl}
-                                chapterName={item.chapterSeen.chapterName}
-                                chapterId={item.chapterSeen.chapterId}
+                                chapterName={item.currentChapter.chapterName}
+                                chapterId={item.currentChapter.chapterId}
                             />
                         );
                     })

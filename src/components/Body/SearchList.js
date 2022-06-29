@@ -1,17 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { axiosGet } from '../../utils/request';
 import MangaCard from './MangaCard';
 import LoadingIcon from '../LoadingIcon/LoadingIcon';
-
+import { getSearchResult } from '../../utils/api';
+import setTitlePage from '../functions/setTitlePage';
 function SearchList({ q }) {
     const [isLoading, setIsLoading] = useState(false);
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPage, setTotalPage] = useState(1);
-
     const [data, setData] = useState([]);
+    const [result, setResult] = useState(null);
 
     useEffect(() => {
         window.scrollTo({
@@ -19,19 +18,24 @@ function SearchList({ q }) {
         });
         if (q.trim()) {
             setIsLoading(true);
-            axiosGet('/search?', {
-                params: {
-                    q: q,
-                },
-            }).then((data) => {
-                setData(data.data);
+            getSearchResult(q, 1).then((res) => {
+                const { title, data, pagination } = res;
+                setResult({ title, pagination });
+                setData(data);
                 setIsLoading(false);
-                setCurrentPage(data.pagination.currentPage);
-                setTotalPage(data.pagination.totalPage);
+                setTitlePage(title);
             });
         }
         // eslint-disable-next-line
     }, [q]);
+
+    const currentPage = useMemo(() => {
+        return result ? result.pagination.currentPage : -1;
+    }, [result]);
+
+    const totalPage = useMemo(() => {
+        return result ? result.pagination.totalPage : 0;
+    }, [result]);
 
     const loadMoreData = () => {
         axiosGet('/search?', {
@@ -39,9 +43,10 @@ function SearchList({ q }) {
                 q: q,
                 page: currentPage + 1,
             },
-        }).then((data) => {
-            setData((pre) => [...pre, ...data.data]);
-            setCurrentPage(data.pagination.currentPage);
+        }).then((res) => {
+            const { title, data, pagination } = res;
+            setResult({ title, pagination });
+            setData((pre) => [...pre, ...data]);
         });
     };
 
@@ -66,11 +71,7 @@ function SearchList({ q }) {
     };
 
     const renderLoading = () => {
-        return (
-            <div className="text-center">
-                <LoadingIcon />
-            </div>
-        );
+        return <LoadingIcon />;
     };
     return (
         <div className="w-full lg:w-full md:w-full p-6 md:p-2 bg-background-2 rounded-xl">

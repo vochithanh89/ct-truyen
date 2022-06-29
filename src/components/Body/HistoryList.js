@@ -4,12 +4,14 @@ import MangaCard from './MangaCard';
 import { MdDeleteOutline } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
+import setTitlePage from '../functions/setTitlePage';
 
 function HistoryList() {
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
         handleGetHistory();
+        setTitlePage('Lịch sử');
     }, []);
 
     const handleGetHistory = () => {
@@ -48,8 +50,8 @@ function HistoryList() {
                                 mangaName={item.mangaName}
                                 id={item.id}
                                 posterUrl={item.posterUrl}
-                                chapterName={item.chapterSeen.chapterName}
-                                chapterId={item.chapterSeen.chapterId}
+                                chapterName={item.currentChapter.chapterName}
+                                chapterId={item.currentChapter.chapterId}
                             />
                         );
                     })

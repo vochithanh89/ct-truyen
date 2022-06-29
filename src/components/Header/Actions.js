@@ -66,7 +66,7 @@ function Actions() {
                     <LeftSidebar
                         onClick={(e) => e.stopPropagation()}
                         className={clsx(
-                            '!block !static !h-screen !w-1/3 md:!w-1/2 bg-background-2 translate-x-[-100%] transition-all duration-500',
+                            '!block !static !h-screen !w-1/3 md:!w-2/3 bg-background-2 translate-x-[-100%] transition-all duration-500',
                             {
                                 '!translate-x-0': isShowFilter,
                             },
@@ -74,11 +74,15 @@ function Actions() {
                     />
                 </Modal>
                 {/* Modal Menu */}
-                <Modal onClick={handleCloseMenu} className="bg-background-0 bg-opacity-60" isOpen={isShowMenu}>
+                <Modal
+                    onClick={handleCloseMenu}
+                    className="bg-background-0 bg-opacity-60 lg:text-lg"
+                    isOpen={isShowMenu}
+                >
                     <div
                         onClick={(e) => e.stopPropagation()}
                         className={clsx(
-                            'flex flex-col h-screen w-1/3 px-4 py-24 md:w-1/2 bg-background-2 text-text-0 translate-x-[-100%] transition-all duration-500',
+                            'flex flex-col h-screen w-1/3 px-6 py-32 md:w-2/3 bg-background-2 text-text-0 translate-x-[-100%] transition-all duration-500',
                             {
                                 '!translate-x-0': isShowMenu,
                             },

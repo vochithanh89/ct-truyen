@@ -79,7 +79,7 @@ function SearchInput({ className }) {
 
     return (
         <div className={clsx('flex-1 flex justify-center md:hidden', className)}>
-            <div className="relative flex m-auto w-[24rem] lg:w-[20rem] xs:w-[18rem]">
+            <div className="relative flex m-auto w-[24rem] md:w-[80%]">
                 <button
                     to={`/search?q=${searchValue}`}
                     className="flex items-center w-[3rem] p-r-4 rounded-l-full bg-background-2"

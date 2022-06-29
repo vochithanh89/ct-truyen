@@ -10,7 +10,7 @@ function MangaCard({ type, handleGetHistory, mangaName, id, posterUrl, chapterNa
     };
 
     return (
-        <div className="w-1/5 lg:w-1/4 md:w-1/2 p-4 md:p-2">
+        <div className="w-1/5 lg:w-1/4 md:w-1/3 p-4 md:p-2">
             <div className="relative block pt-[160%] w-full overflow-hidden peer group">
                 <Link className="absolute left-0 top-0 w-full h-full" title={mangaName} to={`/details/${id}`}>
                     <img className="h-full rounded-lg object-cover" src={posterUrl} alt={mangaName} />

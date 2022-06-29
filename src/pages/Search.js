@@ -7,7 +7,7 @@ import SearchInput from '../components/Header/SearchInput';
 
 function Search() {
     const [searchParams] = useSearchParams();
-    const q = searchParams.get('q');
+    const q = searchParams.get('q')?.trim();
 
     return (
         <>
