@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { axiosGet } from '../../utils/request';
+import { axiosGet } from '../../../utils/request';
 import FilterItem from './FilterItem';
 
 function LeftSidebar({ className, onClick }) {

@@ -8,7 +8,7 @@ function Details() {
 
     return (
         <>
-            <Header />
+            <Header type="fixed" />
             <Body>
                 <MangaDetails id={id} />
             </Body>

@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { AiOutlineStar } from 'react-icons/ai';
 import { IoPersonOutline } from 'react-icons/io5';
 import { MdSignalWifiStatusbarNull } from 'react-icons/md';
-import { FaListUl, FaSort } from 'react-icons/fa';
+import { FaListUl } from 'react-icons/fa';
 import SkeletonLoading from '../SkeletonLoading';
 import setTitlePage from '../functions/setTitlePage';
 import { addMangaToLibrary, removeMangaToLibrary } from '../functions/handleLibrary';
 import { getMangaDetails } from '../../utils/api';
+import Container from '../Container';
+import ChapterList from './ChapterList';
 
 function MangaDetails({ id }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -20,9 +22,9 @@ function MangaDetails({ id }) {
         });
         setIsLoading(true);
         getMangaDetails(id).then((data) => {
+            setData(data);
             setIsLoading(false);
             setIsInLibrary(!!data.isInLibrary);
-            setData(data);
             setTitlePage(data.title);
         });
     }, [id]);
@@ -54,7 +56,7 @@ function MangaDetails({ id }) {
 
     const renderDetails = () => {
         return (
-            <div className="w-full flex items-center md:flex-col">
+            <div className="w-full flex items-center md:flex-col z-10">
                 <div className="w-3/12 lg:w-4/12 md:w-8/12 md:mb-4 mr-12 md:mr-0 rounded-2xl overflow-hidden">
                     <div className="relative pt-[160%]">
                         <img
@@ -64,7 +66,7 @@ function MangaDetails({ id }) {
                         />
                     </div>
                 </div>
-                <div className="flex-1 flex flex-col justify-center text-text-0">
+                <div className="flex-1 flex flex-col justify-center text-text-0 z-[1]">
                     <h2 className="mb-6 text-2xl font-bold line-clamp-2">{data.mangaName}</h2>
                     <p className="mb-4 line-clamp-5 md:line-clamp-6">{data.description}</p>
                     <h3 className="flex items-center">
@@ -177,52 +179,24 @@ function MangaDetails({ id }) {
     };
 
     return (
-        <div className="w-full p-12 md:px-2 md:py-8 rounded-xl bg-background-2">
-            {isLoading ? renderSkeletonLoading() : renderDetails()}
-
-            <h2 className="flex items-center mt-16 mb-4 text-xl text-primary">
-                <FaListUl className="mr-2" />
-                Danh sách Chapter:
-            </h2>
-            <div className="max-h-[70vh] w-full p-4 md:p-2 rounded-lg bg-background-3 scrollbar">
-                <table className="table-auto w-full text-white">
-                    <thead>
-                        <tr>
-                            <td className="font-bold p-2 w-5/12 sm:w-7/12">
-                                <button
-                                    onClick={handleSortChapters}
-                                    className="flex items-center hover:text-primary transition"
-                                >
-                                    Chapter
-                                    <FaSort className="ml-[0.25rem]" />
-                                </button>
-                            </td>
-                            <td className="font-bold p-2 w-4/12 text-center sm:w-5/12">Cập nhật</td>
-                            <td className="font-bold p-2 w-3/12 text-center sm:hidden">Xem</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data?.chapters?.map((chapter, index) => {
-                            return (
-                                <tr key={index}>
-                                    <td className="flex p-2">
-                                        <Link
-                                            className="line-clamp-2 hover:text-primary"
-                                            to={`/reading/${chapter.chapterId}`}
-                                        >
-                                            {chapter.chapterName}
-                                        </Link>
-                                    </td>
-                                    <td className="text-center text-text-1 italic p-2">{chapter.updatedAt}</td>
-                                    <td className="text-center text-text-1 italic p-2 sm:hidden">
-                                        {chapter.viewCount}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+        <div className="w-full">
+            <div className="relative pt-32 pb-20">
+                <div className="absolute inset-0">
+                    <div
+                        className="absolute inset-0 bg-no-repeat bg-cover opacity-70 blur-xl before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-b from-transparent to-background-1"
+                        style={{ backgroundImage: `url('${data.posterUrl}')` }}
+                    ></div>
+                </div>
+                <Container>{isLoading ? renderSkeletonLoading() : renderDetails()}</Container>
             </div>
+
+            <Container>
+                <h2 className="flex items-center mb-4 text-xl text-primary">
+                    <FaListUl className="mr-2" />
+                    Danh sách Chapter:
+                </h2>
+                {data.chapters && <ChapterList chapters={data.chapters} handleSortChapters={handleSortChapters} />}
+            </Container>
         </div>
     );
 }

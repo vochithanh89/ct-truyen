@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux/es/exports';
 import { MdKeyboardArrowDown } from 'react-icons/md';
-import { mangaFiltersSelector } from '../redux/selectors';
-import { mangaFiltersSlice } from '../redux/mangaFiltersSlice';
+import { mangaFiltersSelector } from '../../redux/selectors';
+import { mangaFiltersSlice } from '../../redux/mangaFiltersSlice';
 
 function FilterItem({ data }) {
     const dispatch = useDispatch();

@@ -1,5 +1,7 @@
+import getDate from '../components/functions/getDate';
 import { getHistory } from '../components/functions/handleHistory';
-import { getLibrary } from '../components/functions/handleLibrary';
+import { getLibrary, updateNewLibrary } from '../components/functions/handleLibrary';
+import { addUpdateChapter, getUpdateChapter } from '../components/functions/handleUpdateChapter';
 import { axiosGet } from './request';
 
 export const getMangaList = async (page = 1, filters = {}) => {
@@ -67,4 +69,38 @@ export const getChapter = async (chapterId) => {
         nextChapter: nextChapter ? nextChapter : null,
         posterUrl,
     };
+};
+
+export const getLibraryUpdate = async () => {
+    const library = getLibrary();
+    if (library.length > 0) {
+        const requestChapterDetailsList = library.map((item) => axiosGet(`/details/${item.id}`));
+        let updateLibrary = await Promise.all(requestChapterDetailsList);
+        const newUpdate = [];
+        updateLibrary.forEach((item, index) => {
+            const updateLibraryChapters = item.chapters;
+            const libraryChapters = library[index].chapters;
+            console.log(libraryChapters);
+            if (updateLibraryChapters.length > libraryChapters.length) {
+                updateLibraryChapters.forEach((chapter, index) => {
+                    const isIncludes = libraryChapters.some((item) => item.chapterId === chapter.chapterId);
+                    !isIncludes &&
+                        newUpdate.push({
+                            mangaName: item.mangaName,
+                            id: item.id,
+                            posterUrl: item.posterUrl,
+                            chapterName: chapter.chapterName,
+                            chapterId: chapter.chapterId,
+                            updatedAt: chapter.updatedAt,
+                            viewCount: chapter.viewCount,
+                        });
+                });
+                library[index].chapters = updateLibraryChapters;
+            }
+        });
+        if (newUpdate.length > 0) {
+            addUpdateChapter({ date: getDate(), data: newUpdate });
+            updateNewLibrary(library);
+        }
+    }
 };

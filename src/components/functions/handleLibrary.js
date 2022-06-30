@@ -37,8 +37,6 @@ export const removeMangaToLibrary = (id) => {
     localStorage.setItem('library', JSON.stringify(myData));
 };
 
-export const updateLibrary = async () => {
-    const library = getLibrary();
-    if (library.length > 0) {
-    }
+export const updateNewLibrary = (newLibrary) => {
+    localStorage.setItem('library', JSON.stringify(newLibrary));
 };

@@ -6,7 +6,7 @@ import { FiFilter, FiMenu } from 'react-icons/fi';
 import { FaHome } from 'react-icons/fa';
 
 import Modal from '../Modal';
-import LeftSidebar from '../Body/LeftSidebar';
+import LeftSidebar from '../Body/LeftSidebar/LeftSidebar';
 import { useState } from 'react';
 import clsx from 'clsx';
 

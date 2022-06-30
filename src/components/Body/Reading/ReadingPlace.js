@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import LoadingIcon from '../LoadingIcon/LoadingIcon';
+import LoadingIcon from '../../LoadingIcon/LoadingIcon';
 import ReadingNav from './ReadingNav';
 import { useNavigate } from 'react-router-dom';
-import setTitlePage from '../functions/setTitlePage';
-import { addMangaToHistory } from '../functions/handleHistory';
-import { updateCurrentChapterLibrary } from '../functions/handleLibrary';
-import { getChapter } from '../../utils/api';
+import setTitlePage from '../../functions/setTitlePage';
+import { addMangaToHistory } from '../../functions/handleHistory';
+import { updateCurrentChapterLibrary } from '../../functions/handleLibrary';
+import { getChapter } from '../../../utils/api';
+import Image from '../../Image';
 
 function ReadingPlace({ id }) {
     const navigate = useNavigate();
@@ -94,8 +95,8 @@ function ReadingPlace({ id }) {
                     <ul>
                         {chapter.chapterImages.map((chapterImage, index) => {
                             return (
-                                <li className="min-h-[10rem]" key={index}>
-                                    <img className="w-full block" src={chapterImage.imgUrl} alt={chapterImage.title} />
+                                <li key={index}>
+                                    <Image className="w-full" src={chapterImage.imgUrl} alt={chapterImage.title} />
                                 </li>
                             );
                         })}

@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
+import Image from '../Image';
 
 function SearchResults({ result, handleGoToDetails }) {
     const preventInputFocus = (e) => {
@@ -17,7 +18,7 @@ function SearchResults({ result, handleGoToDetails }) {
                         title={manga.mangaName}
                     >
                         <div className="flex">
-                            <img className="w-1/5 object-cover" src={manga.posterUrl} alt={manga.mangaName} />
+                            <Image className="w-1/5" src={manga.posterUrl} alt={manga.mangaName} />
                             <div className="w-4/5 flex flex-col pl-4 text-left">
                                 <h3 className="text-text-0 truncate">{manga.mangaName}</h3>
                                 <p className="text-text-1 text-sm">{manga.newestChapter.chapterName}</p>

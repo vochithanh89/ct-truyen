@@ -3,6 +3,7 @@ import { removeMangaHistory } from '../functions/handleHistory';
 import { IoCloseSharp } from 'react-icons/io5';
 import { memo } from 'react';
 import clsx from 'clsx';
+import Image from '../Image';
 
 function MangaCard({ type, handleGetHistory, className, mangaName, id, posterUrl, chapterName, chapterId, updatedAt }) {
     const handleRemoveManga = (id) => {
@@ -11,10 +12,14 @@ function MangaCard({ type, handleGetHistory, className, mangaName, id, posterUrl
     };
 
     return (
-        <div className={clsx('w-1/5 lg:w-1/4 md:w-1/2 p-4 md:p-2', className)}>
+        <div className={clsx('lg:w-1/4 md:w-1/2 p-4 md:p-2', className)}>
             <div className="relative block pt-[160%] w-full overflow-hidden peer group">
-                <Link className="absolute left-0 top-0 w-full h-full" title={mangaName} to={`/details/${id}`}>
-                    <img className="h-full rounded-lg object-cover" src={posterUrl} alt={mangaName} />
+                <Link
+                    className="absolute left-0 top-0 w-full h-full rounded-lg overflow-hidden"
+                    title={mangaName}
+                    to={`/details/${id}`}
+                >
+                    <Image src={posterUrl} alt={mangaName} />
                 </Link>
                 {type === 'history' && (
                     <button
