@@ -56,6 +56,7 @@ function SearchList({ q }) {
                 return (
                     <MangaCard
                         key={index}
+                        className="w-1/6"
                         mangaName={manga.mangaName}
                         id={manga.id}
                         posterUrl={manga.posterUrl}

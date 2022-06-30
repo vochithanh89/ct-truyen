@@ -46,6 +46,7 @@ function HistoryList() {
                             <MangaCard
                                 key={index}
                                 type="history"
+                                className="w-1/6"
                                 handleGetHistory={handleGetHistory}
                                 mangaName={item.mangaName}
                                 id={item.id}

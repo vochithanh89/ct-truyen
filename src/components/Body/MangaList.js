@@ -7,7 +7,6 @@ import MangaCard from './MangaCard';
 import LoadingIcon from '../LoadingIcon/LoadingIcon';
 import setTitlePage from '../functions/setTitlePage';
 
-import SkeletonLoading from '../SkeletonLoading';
 import { getMangaList } from '../../utils/api';
 
 function MangaList() {
@@ -71,9 +70,7 @@ function MangaList() {
 
     return (
         <div className="w-10/12 lg:w-full md:w-full p-6 md:p-2 bg-background-2 rounded-xl">
-            <h1 className="my-4 px-2 text-primary text-2xl md:text-xl font-bold">
-                {result?.title || <SkeletonLoading width="12rem" height="2rem" />}
-            </h1>
+            <h1 className="my-4 px-2 text-primary text-2xl md:text-xl font-bold">{result?.title}</h1>
 
             {isLoading ? (
                 renderLoading()

@@ -35,6 +35,7 @@ function LibraryList() {
                                 key={index}
                                 type="library"
                                 handleGetLibrary={handleGetLibrary}
+                                className="w-1/6"
                                 mangaName={item.mangaName}
                                 id={item.id}
                                 posterUrl={item.posterUrl}
