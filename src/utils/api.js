@@ -1,7 +1,7 @@
 import getDate from '../components/functions/getDate';
 import { getHistory } from '../components/functions/handleHistory';
 import { getLibrary, updateNewLibrary } from '../components/functions/handleLibrary';
-import { addUpdateChapter, getUpdateChapter } from '../components/functions/handleUpdateChapter';
+import { addUpdateChapter } from '../components/functions/handleUpdateChapter';
 import { axiosGet } from './request';
 
 export const getMangaList = async (page = 1, filters = {}) => {
