@@ -79,8 +79,7 @@ export const getLibraryUpdate = async () => {
         const newUpdate = [];
         updateLibrary.forEach((item, index) => {
             const updateLibraryChapters = item.chapters;
-            const libraryChapters = library[index].chapters;
-            console.log(libraryChapters);
+            const libraryChapters = library[index].chapters.reverse();
             if (updateLibraryChapters.length > libraryChapters.length) {
                 updateLibraryChapters.forEach((chapter, index) => {
                     const isIncludes = libraryChapters.some((item) => item.chapterId === chapter.chapterId);
@@ -98,6 +97,7 @@ export const getLibraryUpdate = async () => {
                 library[index].chapters = updateLibraryChapters;
             }
         });
+        console.log(newUpdate);
         if (newUpdate.length > 0) {
             addUpdateChapter({ date: getDate(), data: newUpdate });
             updateNewLibrary(library);

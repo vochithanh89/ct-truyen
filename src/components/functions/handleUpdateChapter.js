@@ -10,7 +10,11 @@ export const addUpdateChapter = (data) => {
 
     const myData = updateChapter.filter((item) => item.date !== data.date);
     if (replaceItem) {
-        replaceItem.data.unshift(...data.data);
+        data.data = data.data.forEach((chapter) => {
+            if (replaceItem.data.every((item) => item.chapterId !== chapter.chapterId)) {
+                replaceItem.data.unshift(chapter);
+            }
+        });
         myData.unshift(replaceItem);
     } else {
         myData.unshift(data);

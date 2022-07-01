@@ -36,14 +36,12 @@ function MangaDetails({ id }) {
     };
 
     const handleAddMangaToLibrary = (data) => {
-        const { mangaName, id, posterUrl, chapters, firstChapter, lastChapter, updatedAt } = data;
+        const { mangaName, id, posterUrl, chapters, updatedAt } = data;
         addMangaToLibrary({
             mangaName,
             id,
             posterUrl,
             chapters,
-            firstChapter,
-            lastChapter,
             updatedAt,
         });
         setIsInLibrary(true);
