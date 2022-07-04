@@ -9,6 +9,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { mangaFiltersSlice } from '../components/redux/mangaFiltersSlice';
 
+import { Helmet } from 'react-helmet';
+import { homeSlogan, siteName, title } from '../components/constants/constants';
+import homeImg from '../assets/image/SEO/home.jpg';
+
 function Filter() {
     const navigate = useNavigate();
 
@@ -42,10 +46,23 @@ function Filter() {
     }
 
     return (
-        <div className="w-10/12 lg:w-full md:w-full p-6 md:p-2 bg-background-2 rounded-xl">
-            <h1 className="my-4 px-2 text-primary text-2xl md:text-xl font-bold">{result[result.length - 1]?.title}</h1>
-            <MangaListInfinite data={result} hasMore={hasNextPage} fetchMore={fetchNextPage} />
-        </div>
+        <>
+            <Helmet>
+                <title>{`${result[result.length - 1]?.title} - ${title}`}</title>
+                <meta name="description" content={homeSlogan} />
+                <meta property="og:title" content={title} />
+                <meta property="og:image" content={homeImg} />
+                <meta property="og:site_name" content={siteName} />
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:description" content={homeSlogan} />
+            </Helmet>
+            <div className="w-10/12 lg:w-full md:w-full p-6 md:p-2 bg-background-2 rounded-xl">
+                <h1 className="my-4 px-2 text-primary text-2xl md:text-xl font-bold">
+                    {result[result.length - 1]?.title}
+                </h1>
+                <MangaListInfinite data={result} hasMore={hasNextPage} fetchMore={fetchNextPage} />
+            </div>
+        </>
     );
 }
 

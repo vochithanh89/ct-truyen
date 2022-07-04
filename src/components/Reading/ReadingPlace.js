@@ -8,6 +8,9 @@ import { updateCurrentChapterLibrary } from '../functions/handleLibrary';
 import { getChapter } from '../../utils/api';
 import Image from '../Image';
 
+import { Helmet } from 'react-helmet';
+import { title, detailsSlogan, siteName } from '../constants/constants';
+
 function ReadingPlace({ id }) {
     const navigate = useNavigate();
 
@@ -112,34 +115,56 @@ function ReadingPlace({ id }) {
     };
 
     return (
-        <div className="w-full">
-            {data.length > 0 && (
-                <ReadingNav
-                    chapters={chapters}
-                    mangaId={mangaId}
-                    currentChapter={currentChapter}
-                    prevChapterId={prevChapterId}
-                    nextChapterId={nextChapterId}
-                    setSelectedChapterId={setSelectedChapterId}
-                />
+        <>
+            {currentData && (
+                <Helmet>
+                    <title>{`${currentData.mangaName} ${currentChapter.chapterName} - ${title}`}</title>
+                    <meta
+                        name="description"
+                        content={`Đọc truyện ${currentData.mangaName} ${currentChapter.chapterName} ${detailsSlogan}`}
+                    />
+                    <meta
+                        property="og:title"
+                        content={`Đọc truyện ${currentData.mangaName} ${currentChapter.chapterName} tại ${siteName}`}
+                    />
+                    <meta property="og:image" content={`http:${currentData.posterUrl}`} />
+                    <meta property="og:site_name" content={siteName} />
+                    <meta property="og:url" content={window.location.href} />
+                    <meta
+                        property="og:description"
+                        content={`Đọc truyện ${currentData.mangaName} ${currentChapter.chapterName} ${detailsSlogan}`}
+                    />
+                </Helmet>
             )}
+            <div className="w-full">
+                {data.length > 0 && (
+                    <ReadingNav
+                        chapters={chapters}
+                        mangaId={mangaId}
+                        currentChapter={currentChapter}
+                        prevChapterId={prevChapterId}
+                        nextChapterId={nextChapterId}
+                        setSelectedChapterId={setSelectedChapterId}
+                    />
+                )}
 
-            {isLoading ? (
-                renderLoading()
-            ) : (
-                <InfiniteScroll
-                    className="flex flex-col max-w-3xl m-auto"
-                    dataLength={data.length}
-                    next={loadMoreData}
-                    hasMore={nextChapterId}
-                    loader={renderLoading()}
-                    endMessage={renderEndMessage()}
-                    scrollThreshold={1}
-                >
-                    {renderChapterImages()}
-                </InfiniteScroll>
-            )}
-        </div>
+                {isLoading ? (
+                    renderLoading()
+                ) : (
+                    <InfiniteScroll
+                        className="flex flex-col max-w-3xl m-auto"
+                        dataLength={data.length}
+                        next={loadMoreData}
+                        hasMore={nextChapterId}
+                        loader={renderLoading()}
+                        endMessage={renderEndMessage()}
+                        scrollThreshold={1}
+                    >
+                        {renderChapterImages()}
+                    </InfiniteScroll>
+                )}
+            </div>
+        </>
     );
 }
 
