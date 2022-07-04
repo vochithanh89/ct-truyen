@@ -2,13 +2,13 @@ import { IoMdClose } from 'react-icons/io';
 import { AiOutlineLoading3Quarters, AiOutlineSearch } from 'react-icons/ai';
 import clsx from 'clsx';
 import { memo, useEffect, useRef, useState } from 'react';
-import useDebounce from '../../hooks/useDebounce';
+import useDebounce from '../../../hooks/useDebounce';
 
-import { axiosGet } from '../../utils/request';
+import { axiosGet } from '../../../utils/request';
 import SearchResult from './SearchResult';
 import { useNavigate } from 'react-router-dom';
 
-function SearchInput({ className }) {
+function SearchInput({ disableBlur, className }) {
     const inputRef = useRef();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -43,8 +43,8 @@ function SearchInput({ className }) {
         value.trim() && setIsShowSearchResult(true);
     };
 
-    const unFocusHandle = () => {
-        setIsShowSearchResult(false);
+    const blurHandle = () => {
+        !disableBlur && setIsShowSearchResult(false);
     };
 
     const handleNavigateSearch = () => {
@@ -79,7 +79,7 @@ function SearchInput({ className }) {
 
     return (
         <div className={clsx('flex-1 flex justify-center md:hidden', className)}>
-            <div className="relative flex m-auto w-[24rem] md:w-[80%]">
+            <div className="relative flex m-auto w-[24rem] md:w-[90%]">
                 <button
                     to={`/search?q=${searchValue}`}
                     className="flex items-center w-[3rem] p-r-4 rounded-l-full bg-background-2"
@@ -96,7 +96,7 @@ function SearchInput({ className }) {
                         value={searchValue}
                         onChange={handleSearchValueChange}
                         onFocus={focusHandle}
-                        onBlur={unFocusHandle}
+                        onBlur={blurHandle}
                         onKeyDown={(e) => e.key === 'Enter' && handleNavigateSearch()}
                     />
 

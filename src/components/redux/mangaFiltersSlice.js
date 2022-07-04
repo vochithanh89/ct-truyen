@@ -1,13 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialFilters = {
+    category: 'all',
+    status: '-1',
+    sort: '0',
+};
+
 export const mangaFiltersSlice = createSlice({
     name: 'mangaFilters',
     initialState: {
-        filters: {
-            category: '',
-            status: '-1',
-            sort: '0',
-        },
+        filters: initialFilters,
     },
     reducers: {
         categoryChange: (state, action) => {
@@ -18,6 +20,9 @@ export const mangaFiltersSlice = createSlice({
         },
         sortChange: (state, action) => {
             state.filters.sort = action.payload !== undefined ? action.payload : state.filters.sort;
+        },
+        resetFilters: (state) => {
+            state.filters = initialFilters;
         },
     },
 });

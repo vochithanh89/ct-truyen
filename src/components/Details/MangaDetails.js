@@ -5,35 +5,16 @@ import { IoPersonOutline } from 'react-icons/io5';
 import { MdSignalWifiStatusbarNull } from 'react-icons/md';
 import { FaListUl } from 'react-icons/fa';
 import SkeletonLoading from '../SkeletonLoading';
-import setTitlePage from '../functions/setTitlePage';
 import { addMangaToLibrary, removeMangaToLibrary } from '../functions/handleLibrary';
-import { getMangaDetails } from '../../utils/api';
 import Container from '../Container';
 import ChapterList from './ChapterList';
 
-function MangaDetails({ id }) {
-    const [isLoading, setIsLoading] = useState(true);
-    const [data, setData] = useState({});
+function MangaDetails({ data }) {
     const [isInLibrary, setIsInLibrary] = useState(false);
 
     useEffect(() => {
-        window.scrollTo({
-            top: 0,
-        });
-        setIsLoading(true);
-        getMangaDetails(id).then((data) => {
-            setData(data);
-            setIsLoading(false);
-            setIsInLibrary(!!data.isInLibrary);
-            setTitlePage(data.title);
-        });
-    }, [id]);
-
-    const handleSortChapters = () => {
-        const newData = { ...data };
-        newData.chapters = newData.chapters.reverse();
-        setData(newData);
-    };
+        data && setIsInLibrary(data.isInLibrary);
+    }, [data]);
 
     const handleAddMangaToLibrary = (data) => {
         const { mangaName, id, posterUrl, chapters, updatedAt } = data;
@@ -178,14 +159,14 @@ function MangaDetails({ id }) {
 
     return (
         <div className="w-full">
-            <div className="relative pt-32 pb-20">
+            <div className="relative pt-24 pb-20">
                 <div className="absolute inset-0">
                     <div
                         className="absolute inset-0 bg-no-repeat bg-cover opacity-70 blur-xl before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-b from-transparent to-background-1"
-                        style={{ backgroundImage: `url('${data.posterUrl}')` }}
+                        style={{ backgroundImage: `url('${data?.posterUrl}')` }}
                     ></div>
                 </div>
-                <Container>{isLoading ? renderSkeletonLoading() : renderDetails()}</Container>
+                <Container>{data ? renderDetails() : renderSkeletonLoading()}</Container>
             </div>
 
             <Container>
@@ -193,7 +174,7 @@ function MangaDetails({ id }) {
                     <FaListUl className="mr-2" />
                     Danh sách Chapter:
                 </h2>
-                {data.chapters && <ChapterList chapters={data.chapters} handleSortChapters={handleSortChapters} />}
+                {data?.chapters && <ChapterList chapters={data.chapters} />}
             </Container>
         </div>
     );

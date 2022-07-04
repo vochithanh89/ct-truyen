@@ -1,34 +1,36 @@
-import Header from '../components/Header/Header';
-import Body from '../components/Body/Body';
-import SearchList from '../components/Body/SearchList';
-import { useSearchParams } from 'react-router-dom';
-import ScrollTop from '../components/ScrollTop';
-import SearchInput from '../components/Header/SearchInput';
-import Container from '../components/Container';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import MangaListInfinite from '../components/MangaListInfinite';
+import useGetListInfinite from '../hooks/useGetListInfinite';
+import SearchInput from '../layout/components/Header/SearchInput';
+import Loading from '../layout/components/Loading';
+import { getSearchResult } from '../utils/api';
 
 function Search() {
     const [searchParams] = useSearchParams();
     const q = searchParams.get('q')?.trim();
+    const navigate = useNavigate();
 
-    return (
-        <>
-            <Header />
-            <Body>
-                <ScrollTop />
+    const { isLoading, isError, result, hasNextPage, fetchNextPage } = useGetListInfinite(
+        'searchList',
+        getSearchResult,
+        q,
+    );
 
-                <Container>
-                    <div style={{ minHeight: 'calc(100vh - 80px)' }} className="flex flex-warp">
-                        {q ? (
-                            <SearchList q={q} />
-                        ) : (
-                            <div className="w-full text-center">
-                                <SearchInput className="hidden md:!block !w-full text-center" />
-                            </div>
-                        )}
-                    </div>
-                </Container>
-            </Body>
-        </>
+    if (isLoading) {
+        return <Loading />;
+    } else if (isError) {
+        navigate('/error');
+    }
+
+    return q ? (
+        <div className="w-full p-6 md:p-2 bg-background-2 rounded-xl">
+            <h1 className="my-4 px-2 text-primary text-2xl md:text-xl font-bold">{`Tìm kiếm cho "${q}"`}</h1>
+            <MangaListInfinite data={result} hasMore={hasNextPage} fetchMore={fetchNextPage} />
+        </div>
+    ) : (
+        <div className="w-full">
+            <SearchInput disableBlur className="!hidden md:!flex"></SearchInput>
+        </div>
     );
 }
 

@@ -1,17 +1,28 @@
-import Header from '../components/Header/Header';
-import Body from '../components/Body/Body';
-import { useParams } from 'react-router-dom';
-import MangaDetails from '../components/Body/MangaDetails';
+import { useNavigate, useParams } from 'react-router-dom';
+import useGetData from '../hooks/useGetData';
+import { getMangaDetails } from '../utils/api';
+import MangaDetails from '../components/Details/MangaDetails';
+import { useEffect } from 'react';
 
 function Details() {
     const { id } = useParams();
 
+    const navigate = useNavigate();
+    const { data, isError } = useGetData(id, getMangaDetails, id);
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+        });
+    }, [id]);
+
+    if (isError) {
+        navigate('/error');
+    }
+
     return (
         <>
-            <Header type="fixed" />
-            <Body>
-                <MangaDetails id={id} />
-            </Body>
+            <MangaDetails data={data} />
         </>
     );
 }

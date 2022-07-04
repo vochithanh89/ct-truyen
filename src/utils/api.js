@@ -12,22 +12,17 @@ export const getMangaList = async (page = 1, filters = {}) => {
         },
     });
 
-    const filterInfo = await axiosGet('/filter');
-    const category = filterInfo.find((item) => item.id === 'category');
-    const title = category.filtersValue.find((item) => item.id === filters.category).name;
-    return {
-        title,
-        ...mangaList,
-    };
+    return mangaList;
 };
 
-export const getSearchResult = async (query, page) => {
+export const getSearchResult = async (page = 1, keyword) => {
     const mangaList = await axiosGet('/search', {
         params: {
-            q: query.trim(),
+            q: keyword?.trim(),
             page,
         },
     });
+
     return {
         title: 'Tìm truyện tranh',
         ...mangaList,
@@ -97,10 +92,14 @@ export const getLibraryUpdate = async () => {
                 library[index].chapters = updateLibraryChapters;
             }
         });
-        console.log(newUpdate);
         if (newUpdate.length > 0) {
             addUpdateChapter({ date: getDate(), data: newUpdate });
             updateNewLibrary(library);
         }
     }
+};
+
+export const getFilter = async () => {
+    const filter = await axiosGet('/filter');
+    return filter;
 };

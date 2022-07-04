@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
-import { removeMangaHistory } from '../functions/handleHistory';
+import { removeMangaHistory } from '../components/functions/handleHistory';
 import { IoCloseSharp } from 'react-icons/io5';
 import { memo } from 'react';
 import clsx from 'clsx';
-import Image from '../Image';
+import Image from '../components/Image';
 
-function MangaCard({ type, handleGetHistory, className, mangaName, id, posterUrl, chapterName, chapterId, updatedAt }) {
+function MangaCard({ type, handleChangeList, className, mangaName, id, posterUrl, chapterName, chapterId, updatedAt }) {
     const handleRemoveManga = (id) => {
         removeMangaHistory(id);
-        handleGetHistory();
+        handleChangeList();
     };
 
     return (
@@ -37,9 +37,7 @@ function MangaCard({ type, handleGetHistory, className, mangaName, id, posterUrl
                     <h2 className="w-full pt-2 hover:text-primary line-clamp-1 transition">{mangaName}</h2>
                 </Link>
                 <Link title={chapterName} to={`/reading/${chapterId}`}>
-                    <p className="text-text-1 text-sm line-clamp-1">
-                        {type === 'history' || type === 'library' ? `Đọc tiếp ${chapterName}` : chapterName}
-                    </p>
+                    <p className="text-text-1 text-sm line-clamp-1">{chapterName}</p>
                     <p className="text-text-1 text-sm line-clamp-1 italic">{updatedAt}</p>
                 </Link>
                 <div></div>

@@ -1,14 +1,15 @@
 import clsx from 'clsx';
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux/es/exports';
 import { MdKeyboardArrowDown } from 'react-icons/md';
-import { mangaFiltersSelector } from '../../redux/selectors';
-import { mangaFiltersSlice } from '../../redux/mangaFiltersSlice';
+import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
+import { mangaFiltersSelector } from '../../../components/redux/selectors';
 
 function FilterItem({ data }) {
-    const dispatch = useDispatch();
-
     const { filters } = useSelector(mangaFiltersSelector);
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const prevSearchParams = Object.fromEntries([...searchParams]);
 
     const [isShowMenu, setIsShowMenu] = useState(true);
 
@@ -16,9 +17,9 @@ function FilterItem({ data }) {
         data.filtersValue.length > 8 && setIsShowMenu((pre) => !pre);
     };
 
-    const handleFilter = (type, value) => {
-        const action = `${type}Change`;
-        dispatch(mangaFiltersSlice.actions[action](value));
+    const handleFilter = (type, id) => {
+        prevSearchParams[type] = id;
+        setSearchParams(prevSearchParams);
     };
 
     return (
@@ -36,8 +37,8 @@ function FilterItem({ data }) {
                     return (
                         <li className="text-left mr-2" key={index}>
                             <button
-                                onClick={() => handleFilter(data.id, item.id)}
-                                className={clsx('text-left text-text-1 transition-all', {
+                                onClick={(e) => handleFilter(data.id, item.id)}
+                                className={clsx('w-full text-left text-text-1 transition-all', {
                                     '!text-text-0': item.id === filters[data.id],
                                 })}
                             >

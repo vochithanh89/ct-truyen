@@ -1,13 +1,7 @@
-import Header from '../components/Header/Header';
-import Body from '../components/Body/Body';
+import Error from '../layout/components/Error';
 
 function NotFound() {
-    return (
-        <>
-            <Header />
-            <Body></Body>
-        </>
-    );
+    return <Error />;
 }
 
 export default NotFound;

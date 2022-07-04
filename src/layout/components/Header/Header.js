@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import Container from '../Container';
+import Container from '../../../components/Container';
 import Logo from './Logo';
 import Actions from './Actions';
 import SearchInput from './SearchInput';

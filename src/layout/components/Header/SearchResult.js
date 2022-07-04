@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
-import Image from '../Image';
+import Image from '../../../components/Image';
 
 function SearchResults({ result, handleGoToDetails }) {
     const preventInputFocus = (e) => {

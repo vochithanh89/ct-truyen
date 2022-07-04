@@ -1,21 +1,10 @@
-import Header from '../components/Header/Header';
-import Body from '../components/Body/Body';
-import ReadingPlace from '../components/Body/Reading/ReadingPlace';
 import { useParams } from 'react-router-dom';
-import ScrollTop from '../components/ScrollTop';
+import ReadingPlace from '../components/Reading/ReadingPlace';
 
 function Reading() {
     const { '*': id } = useParams();
 
-    return (
-        <>
-            <Header type="relative" />
-            <Body>
-                <ReadingPlace id={id} />
-                <ScrollTop />
-            </Body>
-        </>
-    );
+    return <ReadingPlace id={id} />;
 }
 
 export default Reading;

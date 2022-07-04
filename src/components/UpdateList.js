@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getLibraryUpdate } from '../../../utils/api';
-import { getUpdateChapter } from '../../functions/handleUpdateChapter';
-import Image from '../../Image';
-import LoadingIcon from '../../LoadingIcon/LoadingIcon';
+import { Link, useNavigate } from 'react-router-dom';
+import { getLibraryUpdate } from '../utils/api';
+import { getUpdateChapter } from './functions/handleUpdateChapter';
+import Image from './Image';
+import LoadingIcon from './LoadingIcon/LoadingIcon';
 
 function UpdateList() {
+    const navigate = useNavigate();
+
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -13,11 +15,16 @@ function UpdateList() {
         const updateChapter = getUpdateChapter();
         setData(updateChapter);
         setIsLoading(true);
-        getLibraryUpdate().then(() => {
-            const updateChapter = getUpdateChapter();
-            setIsLoading(false);
-            setData(updateChapter);
-        });
+        getLibraryUpdate()
+            .then(() => {
+                const updateChapter = getUpdateChapter();
+                setIsLoading(false);
+                setData(updateChapter);
+            })
+            .catch(() => {
+                navigate('/error');
+            });
+        // eslint-disable-next-line
     }, []);
 
     const renderChapter = () => {

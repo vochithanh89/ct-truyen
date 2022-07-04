@@ -9,6 +9,6 @@ export const axiosGet = async (path, options) => {
         const res = await request(path, options);
         return res.data;
     } catch (error) {
-        return error;
+        throw new Error();
     }
 };

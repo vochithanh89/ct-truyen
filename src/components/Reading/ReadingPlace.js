@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import LoadingIcon from '../../LoadingIcon/LoadingIcon';
+import LoadingIcon from '../LoadingIcon/LoadingIcon';
 import ReadingNav from './ReadingNav';
 import { useNavigate } from 'react-router-dom';
-import setTitlePage from '../../functions/setTitlePage';
-import { addMangaToHistory } from '../../functions/handleHistory';
-import { updateCurrentChapterLibrary } from '../../functions/handleLibrary';
-import { getChapter } from '../../../utils/api';
-import Image from '../../Image';
+import { addMangaToHistory } from '../functions/handleHistory';
+import { updateCurrentChapterLibrary } from '../functions/handleLibrary';
+import { getChapter } from '../../utils/api';
+import Image from '../Image';
 
 function ReadingPlace({ id }) {
     const navigate = useNavigate();
@@ -23,11 +22,14 @@ function ReadingPlace({ id }) {
             top: 0,
         });
         setIsLoading(true);
-        getChapter(selectedChapterId).then((data) => {
-            setIsLoading(false);
-            setTitlePage(data.title);
-            setData([data]);
-        });
+        getChapter(selectedChapterId)
+            .then((data) => {
+                setIsLoading(false);
+                setData([data]);
+            })
+            .catch(() => {
+                navigate('/error');
+            });
         // eslint-disable-next-line
     }, [selectedChapterId]);
 
@@ -69,12 +71,15 @@ function ReadingPlace({ id }) {
     }, [currentData]);
 
     const loadMoreData = () => {
-        getChapter(nextChapterId).then((data) => {
-            navigate(`/reading/${nextChapterId}`);
-            setIsLoading(false);
-            setTitlePage(data.title);
-            setData((pre) => [...pre, data]);
-        });
+        getChapter(nextChapterId)
+            .then((data) => {
+                navigate(`/reading/${nextChapterId}`);
+                setIsLoading(false);
+                setData((pre) => [...pre, data]);
+            })
+            .catch(() => {
+                navigate('/error');
+            });
     };
 
     const renderLoading = () => {

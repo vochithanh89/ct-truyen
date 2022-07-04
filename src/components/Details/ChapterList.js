@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { FaSort } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-function ChapterList({ chapters, handleSortChapters }) {
-    // console.log(chapters);
+function ChapterList({ chapters }) {
+    const [data, setData] = useState(chapters);
+    const handleSortChapters = () => {
+        setData((pre) => [...pre].reverse());
+    };
 
     return (
         <div className="max-h-[70vh] w-full mb-4 p-4 md:p-2 rounded-lg bg-background-3 scrollbar">
@@ -23,7 +27,7 @@ function ChapterList({ chapters, handleSortChapters }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {chapters.map((chapter, index) => {
+                    {data.map((chapter, index) => {
                         return (
                             <tr key={index}>
                                 <td className="flex p-2">
