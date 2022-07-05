@@ -5,7 +5,7 @@ import { getMangaList } from '../utils/api';
 import MangaListInfinite from '../components/MangaListInfinite';
 import Loading from '../layout/components/Loading';
 
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { mangaFiltersSlice } from '../components/redux/mangaFiltersSlice';
 
@@ -14,6 +14,8 @@ import { homeSlogan, siteName, title } from '../components/constants/constants';
 import homeImg from '../assets/image/SEO/home.jpg';
 
 function Filter() {
+    const { search } = useLocation();
+
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
@@ -48,7 +50,11 @@ function Filter() {
     return (
         <>
             <Helmet>
-                <title>{`${result[result.length - 1]?.title} - ${title}`}</title>
+                <title>
+                    {search
+                        ? `${result[result.length - 1]?.title} - ${title}`
+                        : 'CTTruyen - Đọc truyện tranh online, Đọc truyện hay mới nhất'}
+                </title>
                 <meta name="description" content={homeSlogan} />
                 <meta property="og:title" content={title} />
                 <meta property="og:image" content={homeImg} />

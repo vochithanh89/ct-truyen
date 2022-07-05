@@ -63,12 +63,13 @@ function MangaDetails({ data }) {
                     <div className="flex flex-wrap mb-4">
                         {data.categories.map((category, index) => {
                             return (
-                                <div
+                                <Link
                                     key={index}
-                                    className="px-[0.5rem] py-[0.25rem] mr-2 mb-2 border-2 border-solid border-primary rounded-lg"
+                                    to={`/?category=${category.categoryId}`}
+                                    className="px-[0.5rem] py-[0.25rem] mr-2 mb-2 border-2 border-solid border-white rounded-lg hover:border-primary hover:text-primary transition-all"
                                 >
                                     {category.categoryName}
-                                </div>
+                                </Link>
                             );
                         })}
                     </div>

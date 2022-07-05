@@ -1,26 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { hydrateRoot, createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
 
-import { QueryClient, QueryClientProvider } from 'react-query';
-// import { ReactQueryDevtools } from 'react-query/devtools';
+const rootElement = document.getElementById('root');
+// const root = hydrateRoot(rootElement, <App />);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            cacheTime: Infinity,
-            refetchOnWindowFocus: false,
-            retry: false,
-        },
-    },
-});
-
-root.render(
-    <QueryClientProvider client={queryClient}>
-        <App />
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-    </QueryClientProvider>,
-);
+if (rootElement.hasChildNodes()) {
+    const root = hydrateRoot(rootElement, <App />);
+} else {
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
+}
