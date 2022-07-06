@@ -76,7 +76,7 @@ function ReadingPlace({ id }) {
     const loadMoreData = () => {
         getChapter(nextChapterId)
             .then((data) => {
-                navigate(`/reading/${nextChapterId}`);
+                navigate(`/reading/${nextChapterId}`, { replace: true });
                 setIsLoading(false);
                 setData((pre) => [...pre, data]);
             })

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getHistory, removeAllHistory } from '../components/functions/handleHistory';
 import MangaList from '../components/MangaList';
 import clsx from 'clsx';
@@ -11,6 +11,12 @@ import homeImg from '../assets/image/SEO/home.jpg';
 
 function History() {
     const [history, setHistory] = useState(() => getHistory());
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+        });
+    }, []);
 
     const handleChangeList = () => {
         const newHistory = getHistory();

@@ -3,7 +3,7 @@ import MangaList from '../components/MangaList';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import UpdateList from '../components/UpdateList';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Helmet } from 'react-helmet';
 import { homeSlogan, siteName, title } from '../components/constants/constants';
@@ -13,6 +13,12 @@ function Library() {
     const library = getLibrary();
 
     const [menu, setMenu] = useState('library');
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+        });
+    }, [menu]);
 
     const changeLibraryList = () => {
         setMenu('library');

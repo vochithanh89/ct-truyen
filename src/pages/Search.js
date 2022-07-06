@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import MangaListInfinite from '../components/MangaListInfinite';
 import useGetListInfinite from '../hooks/useGetListInfinite';
@@ -9,6 +10,12 @@ function Search() {
     const [searchParams] = useSearchParams();
     const q = searchParams.get('q')?.trim();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+        });
+    }, [q]);
 
     const { isLoading, isError, result, hasNextPage, fetchNextPage } = useGetListInfinite(
         'searchList',
