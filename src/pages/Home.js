@@ -28,9 +28,13 @@ function Filter() {
         window.scrollTo({
             top: 0,
         });
-        dispatch(mangaFiltersSlice.actions.sortChange(sort));
-        dispatch(mangaFiltersSlice.actions.statusChange(status));
-        dispatch(mangaFiltersSlice.actions.categoryChange(category));
+        if (search) {
+            dispatch(mangaFiltersSlice.actions.sortChange(sort));
+            dispatch(mangaFiltersSlice.actions.statusChange(status));
+            dispatch(mangaFiltersSlice.actions.categoryChange(category));
+        } else {
+            dispatch(mangaFiltersSlice.actions.resetFilters());
+        }
         // eslint-disable-next-line
     }, [sort, status, category]);
 
