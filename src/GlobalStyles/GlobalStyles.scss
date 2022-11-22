@@ -1,0 +1,61 @@
+@font-face {
+    font-family: Poppins;
+    src: url(../assets/font/font-poppins/Poppins.woff);
+}
+
+html {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    overflow: overlay;
+
+    &::-webkit-scrollbar {
+        width: 0.5rem !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(60, 60, 60, 0.5);
+        border-radius: 99999px;
+    }
+}
+
+button:active {
+    outline: none;
+}
+
+.scrollbar {
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+        width: 0.5rem !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(60, 60, 60, 0.5);
+        border-radius: 999999px;
+    }
+}
+
+.scrollbar-overlay {
+    overflow: overlay;
+
+    &::-webkit-scrollbar {
+        width: 0.5rem !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(60, 60, 60, 0.5);
+        border-radius: 999999px;
+    }
+}
+
+@media screen and (max-width: 1023px) {
+    * {
+        user-select: none !important;
+        cursor: default !important;
+    }
+    html {
+        font-size: 87.5%;
+    }
+}
