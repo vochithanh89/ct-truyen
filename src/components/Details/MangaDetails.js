@@ -8,6 +8,7 @@ import SkeletonLoading from '../SkeletonLoading';
 import { addMangaToLibrary, removeMangaToLibrary } from '../functions/handleLibrary';
 import Container from '../Container';
 import ChapterList from './ChapterList';
+import Image from '../Image';
 
 function MangaDetails({ data }) {
     const [isInLibrary, setIsInLibrary] = useState(false);
@@ -38,7 +39,7 @@ function MangaDetails({ data }) {
             <div className="w-full flex items-center md:flex-col z-10">
                 <div className="w-3/12 lg:w-4/12 md:w-8/12 md:mb-4 mr-12 md:mr-0 rounded-2xl overflow-hidden">
                     <div className="relative pt-[160%]">
-                        <img
+                        <Image
                             className="absolute top-0 left-0 w-full h-full object-cover"
                             src={data.posterUrl}
                             alt={data.mangaName}
@@ -162,10 +163,10 @@ function MangaDetails({ data }) {
         <div className="w-full">
             <div className="relative pt-24 pb-20">
                 <div className="absolute inset-0">
-                    <div
-                        className="absolute inset-0 bg-no-repeat bg-cover opacity-70 blur-xl before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-b from-transparent to-background-1"
-                        style={{ backgroundImage: `url('${data?.posterUrl}')` }}
-                    ></div>
+                    <Image
+                        className="absolute inset-0 w-full h-full bg-no-repeat bg-cover opacity-40 blur-xl transition-none"
+                        src={data?.posterUrl}
+                    ></Image>
                 </div>
                 <Container>{data ? renderDetails() : renderSkeletonLoading()}</Container>
             </div>
